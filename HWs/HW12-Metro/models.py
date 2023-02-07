@@ -51,7 +51,6 @@ class Card:
                 raise CardHasExpired
         except CardHasExpired as e:
             print(e)
-            return
         try:
             if self.card_amount < Trip.trips[trip_type].cost:
                 raise NotEnoughCharge
