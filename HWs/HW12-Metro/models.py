@@ -1,7 +1,7 @@
 import pickle
 import uuid
 import datetime
-
+from exceptions import *
 
 class Card:
     cards = {}
@@ -28,17 +28,19 @@ class Card:
 
     def one_way(self, trip_type):
         try:
-            assert self.card_amount >= Trip.trips[trip_type].cost, "not enough charge!"
+            if self.card_amount < Trip.trips[trip_type].cost:
+                raise NotEnoughCharge
             self.card_amount -= Trip.trips[trip_type].cost
-        except AssertionError as e:
+        except NotEnoughCharge as e:
             print(e)
             return
 
     def credit(self, trip_type):
         try:
-            assert self.card_amount >= Trip.trips[trip_type].cost, "not enough charge!"
+            if self.card_amount < Trip.trips[trip_type].cost:
+                raise NotEnoughCharge
             self.card_amount -= Trip.trips[trip_type].cost
-        except AssertionError as e:
+        except NotEnoughCharge as e:
             print(e)
             return
 

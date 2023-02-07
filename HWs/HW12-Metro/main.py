@@ -2,8 +2,9 @@ from models import *
 from admin import Admin
 import pickle
 import datetime
+from exceptions import *
 
-Trip.trips[0] = Trip(1000, datetime.datetime.now(), datetime.datetime.now() + datetime.timedelta(hours=1))
+Trip.trips[0] = Trip(3000, datetime.datetime.now(), datetime.datetime.now() + datetime.timedelta(hours=1))
 
 login_type_menu = {
     1: "client login",
@@ -56,7 +57,7 @@ while True:
                 """)
                 card_type = int(input("Your card type: "))
                 if card_type == 1:
-                    amount = 2000
+                    amount = int(input("Your Card Charge: "))
                     new_client.bank_acc.withdraw(amount)
                     Client.update_clients_pickle()
                     Client.buy_card(card_type, amount, None)
@@ -120,7 +121,6 @@ while True:
                                 print(f"Remaining charge: {card.card_amount}")
                                 Card.cards.pop(input_id)
                                 Card.update_cards_pickle()
-                                print(Card.cards)
                                 break
 
                             elif card.card_type == 2:
