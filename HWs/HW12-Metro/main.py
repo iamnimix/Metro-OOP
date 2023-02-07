@@ -73,7 +73,7 @@ while True:
 
                 elif card_type == 3:
                     now = datetime.datetime.now()
-                    expiration = now + datetime.timedelta(days=365)
+                    expiration = now + datetime.timedelta(minutes=1)
                     amount = int(input("Your Card Charge: "))
                     new_client.bank_acc.withdraw(amount)
                     Client.update_clients_pickle()
@@ -159,7 +159,7 @@ while True:
 
                             elif card.card_type == 3:
                                 while True:
-                                    bank_acc_client = Client.clients[input_id].bank_acc
+                                    bank_acc_client = Client.clients[input_ssn].bank_acc
                                     print("""
                                     1.CHARGE CARD
                                     2.USE CARD
@@ -176,7 +176,12 @@ while True:
                                         print(f"Remaining charge: {card.card_amount}")
 
                                     elif user_input == 2:
-                                        card.timed()
+                                        res = Trip.check_trip()
+                                        if not res:
+                                            Trip.check_trip()
+                                        print(f"Trips are: {Trip.trips}")
+                                        trip = int(input("choice one: "))
+                                        card.timed(trip)
                                         Card.update_cards_pickle()
                                         print(f"Remaining charge: {card.card_amount}")
 
@@ -200,7 +205,7 @@ while True:
                 first_name = input("Enter your first name: ")
                 last_name = input("Enter your last name: ")
                 input_ssn = input("Enter your National Code: ")
-                new_admin = Admin.new_admin(first_name, last_name, None,  input_ssn, None)
+                new_admin = Admin.new_admin(first_name, last_name, None, input_ssn, None)
                 print(f'your ID is: {new_admin.get_id()}')
                 print(Admin.admins)
 
