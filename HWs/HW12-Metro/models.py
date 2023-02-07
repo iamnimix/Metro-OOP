@@ -3,6 +3,7 @@ import uuid
 import datetime
 from exceptions import *
 
+
 class Card:
     cards = {}
 
@@ -44,10 +45,19 @@ class Card:
             print(e)
             return
 
-    def timed(self):
-        if self.date > datetime.datetime.now():
-            Trip.use_card(self)
-        else:
+    def timed(self, trip_type):
+        try:
+            if not self.date > datetime.datetime.now():
+                raise CardHasExpired
+        except CardHasExpired as e:
+            print(e)
+            return
+        try:
+            if self.card_amount < Trip.trips[trip_type].cost:
+                raise NotEnoughCharge
+            self.card_amount -= Trip.trips[trip_type].cost
+        except NotEnoughCharge as e:
+            print(e)
             return
 
     def card_charge(self, amount):
