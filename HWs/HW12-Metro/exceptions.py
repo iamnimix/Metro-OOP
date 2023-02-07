@@ -5,10 +5,12 @@ class NotEnoughCharge(Exception):
 
 
 class CardHasExpired(Exception):
-<<<<<<< HEAD
-    def __init__(self, message="The card has expired"):
-=======
     def __init__(self, message="Card has expired!"):
->>>>>>> develop
+        self.message = message
+        super().__init__(self.message)
+
+
+class NotEnoughMoney(Exception):
+    def __init__(self, message="Not enough money in bank!"):
         self.message = message
         super().__init__(self.message)

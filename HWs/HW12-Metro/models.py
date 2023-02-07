@@ -59,8 +59,6 @@ class Card:
             print(e)
             return
 
-
-
     def card_charge(self, amount):
         self.card_amount += amount
         return self.card_amount
@@ -135,10 +133,11 @@ class BankAccount:
 
     def withdraw(self, amount):
         try:
-            assert self.__check_minimum_balance(amount), "Not enough money in bank!"
-            self.__balance -= amount
-            return True
-        except AssertionError as e:
+            if self.__check_minimum_balance(amount):
+                self.__balance -= amount
+                return True
+            raise NotEnoughMoney
+        except NotEnoughMoney as e:
             print(e)
             return False
 

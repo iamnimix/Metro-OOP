@@ -93,8 +93,8 @@ while True:
                     """)
                     choice = int(input("> "))
                     if choice == 1:
-                        if input_id in Client.clients:
-                            bank = Client.clients[input_id].bank_acc
+                        if input_ssn in Client.clients:
+                            bank = Client.clients[input_ssn].bank_acc
                             print("""
                             1.withdraw
                             2.deposit
