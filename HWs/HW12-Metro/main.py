@@ -45,6 +45,7 @@ while True:
                 while True:
                     try:
                         balance_bank_acc = int(input("Enter your balance bank account: "))
+                        break
                     except ValueError:
                         print("You should enter a number not string!")
                         continue
