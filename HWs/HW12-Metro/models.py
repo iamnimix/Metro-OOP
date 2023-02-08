@@ -21,6 +21,7 @@ class Card:
         cls.cards[id] = cls(card_type, card_amount, date)
         with open('cards.pickle', 'wb') as cards_info_file:
             pickle.dump(cls.cards, cards_info_file)
+        return cls.cards[id]
 
     @classmethod
     def update_cards_pickle(cls):
