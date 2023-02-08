@@ -3,7 +3,12 @@ from admin import Admin
 import pickle
 import datetime
 from exceptions import *
+import logging
 
+# loggers
+logger = logging.getLogger(__name__)
+logging.basicConfig(filename='metro.log', filemode='w', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                    level=logging.INFO)
 Trip.trips[0] = Trip(3000, datetime.datetime.now(), datetime.datetime.now() + datetime.timedelta(hours=1))
 
 login_type_menu = {
@@ -33,7 +38,7 @@ while True:
     op = login_type_menu.get(login_type)
 
     if op == "client login":
-
+        logger.info("Enter in CLIENT LOGIN section")
         while True:
             print_menu(_menu)
             use_type = int(input("> "))
@@ -42,19 +47,12 @@ while True:
             if _op == "signup":
                 first_name = input("Enter your first name: ")
                 last_name = input("Enter your last name: ")
-                while True:
-                    try:
-                        balance_bank_acc = int(input("Enter your balance bank account: "))
-                        break
-                    except ValueError:
-                        print("You should enter a number not string!")
-                        continue
-                    new_bank_acc = BankAccount(balance_bank_acc)
-                    phone_number = input("Enter your phone number: ")
-                    ssn = input("Enter your National Code: ")
-                    new_client = Client.signup(first_name, last_name, new_bank_acc, ssn, phone_number)
-                    print(f'your ID is: {new_client.get_id()}')
-                    break
+                balance_bank_acc = int(input("Enter your balance bank account: "))
+                new_bank_acc = BankAccount(balance_bank_acc)
+                phone_number = input("Enter your phone number: ")
+                ssn = input("Enter your National Code: ")
+                new_client = Client.signup(first_name, last_name, new_bank_acc, ssn, phone_number)
+                print(f'your ID is: {new_client.get_id()}')
 
                 while True:
                     print("""
@@ -68,14 +66,15 @@ while True:
                         while True:
                             try:
                                 amount = int(input("Your Card Charge: "))
+                                break
                             except ValueError:
                                 print("You should enter a number not string!")
+                                logger.error("Input charge card in oneway type!")
                                 continue
                             new_client.bank_acc.withdraw(amount)
                             Client.update_clients_pickle()
                             Client.buy_card(card_type, amount, None)
                             print("FINISH!")
-                            break
                         break
 
                     elif card_type == 2:
@@ -90,6 +89,7 @@ while True:
                                 break
                             except ValueError:
                                 print("You should enter a number not string!")
+                                logger.error("Input charge card in credit type!")
                                 continue
                         break
 
@@ -102,6 +102,7 @@ while True:
                                 break
                             except ValueError:
                                 print("You should enter a number not string!")
+                                logger.error("Input charge card in timed type!")
                                 continue
                         new_client.bank_acc.withdraw(amount)
                         Client.update_clients_pickle()
@@ -113,6 +114,8 @@ while True:
                     else:
                         print("Wrong input!")
 
+                logger.info("new client signed!")
+
             elif _op == "login":
                 while True:
                     input_ssn = input("Enter your National Code: ")
@@ -121,9 +124,11 @@ while True:
                         break
                     except KeyError:
                         print("There is no this national code!")
+                        logger.error("Invalid national code Client login!")
                         continue
 
                 input_id = input("Enter your id:")
+                logger.info(f"{input_ssn} login")
                 while True:
                     print("""
                     1.Bank Account
@@ -133,6 +138,7 @@ while True:
                     choice = int(input("> "))
                     if choice == 1:
                         if input_ssn in Client.clients:
+                            logger.info(f"{input_ssn} login in bank account")
                             bank = Client.clients[input_ssn].bank_acc
                             print("""
                             1.withdraw
@@ -145,17 +151,22 @@ while True:
                                     try:
                                         withdrawal = int(input("Withdrawal amount > "))
                                         bank.withdraw(withdrawal)
+                                        logger.info(f"{input_ssn} withdraw {withdrawal}")
                                         break
                                     except ValueError:
                                         print("You should enter a number not string!")
+                                        logger.error("Input Invalid withdrawal amount from bank!")
                                         continue
                             elif inp == 2:
                                 while True:
                                     try:
                                         deposit = int(input("Deposit amount > "))
                                         bank.deposit(deposit)
+                                        logger.info(f"{input_ssn} deposit {deposit}")
+                                        break
                                     except ValueError:
                                         print("You should enter a number not string!")
+                                        logger.error("Input Invalid Deposit amount from bank!")
                                         continue
                             elif inp == 3:
                                 print(f"The remaining amount: {bank.get_balance()}")
@@ -169,6 +180,7 @@ while True:
                                 print(f"Trips are: {Trip.trips}")
                                 trip = int(input("choice one: "))
                                 card.one_way(trip)
+                                logger.info(f"{input_ssn} choice a trip on oneway")
                                 print(f"Remaining charge: {card.card_amount}")
                                 Card.cards.pop(input_id)
                                 Card.update_cards_pickle()
@@ -192,8 +204,10 @@ while True:
                                             card.card_charge(charge)
                                             Card.update_cards_pickle()
                                             print(f"Remaining charge: {card.card_amount}")
+                                            logger.info(f"{input_ssn} charged credit card")
                                         else:
                                             print("card didn't charge!!!!")
+                                            logger.info(f"{input_ssn} couldn't charge credit card")
 
                                     elif user_input == 2:
                                         res = Trip.check_trip()
@@ -204,6 +218,7 @@ while True:
                                         card.credit(trip)
                                         Card.update_cards_pickle()
                                         print(f"Remaining charge: {card.card_amount}")
+                                        logger.info(f"{input_ssn} choice a trip on credit")
 
                                     elif user_input == 3:
                                         break
@@ -225,6 +240,7 @@ while True:
                                         card.card_charge(charge)
                                         Card.update_cards_pickle()
                                         print(f"Remaining charge: {card.card_amount}")
+                                        logger.info(f"{input_ssn} charged timed card")
 
                                     elif user_input == 2:
                                         res = Trip.check_trip()
@@ -235,6 +251,7 @@ while True:
                                         card.timed(trip)
                                         Card.update_cards_pickle()
                                         print(f"Remaining charge: {card.card_amount}")
+                                        logger.info(f"{input_ssn} choice a trip on timed")
 
                                     elif user_input == 3:
                                         break
@@ -260,6 +277,7 @@ while True:
                 input_ssn = input("Enter your National Code: ")
                 new_admin = Admin.new_admin(first_name, last_name, None, input_ssn, None)
                 print(f'your ID is: {new_admin.get_id()}')
+                logger.info("new admin signed!")
 
             elif _op == "login":
                 while True:
@@ -269,8 +287,10 @@ while True:
                         break
                     except KeyError:
                         print("There is no this national code!")
+                        logger.error("Invalid national code Admin login!")
                         continue
                 input_id = input("Enter your id:")
+                logger.info(f"{input_ssn} login")
                 while True:
                     if input_ssn in Admin.admins:
                         _admin = Admin.admins[input_ssn]
@@ -285,9 +305,11 @@ while True:
                         if inp == 1:
                             _admin.trip_registration()
                             print("GOOD!")
+                            logger.info("new trip registered")
                         elif inp == 2:
                             _admin.edit_trips()
                             print("GOOD!")
+                            logger.info("a trip deleted")
                         elif inp == 3:
                             break
 
