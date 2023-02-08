@@ -33,18 +33,20 @@ class Card:
             if self.card_amount < Trip.trips[trip_type].cost:
                 raise NotEnoughCharge
             self.card_amount -= Trip.trips[trip_type].cost
+            return True
         except NotEnoughCharge as e:
             print(e)
-            return
+            return False
 
     def credit(self, trip_type):
         try:
             if self.card_amount < Trip.trips[trip_type].cost:
                 raise NotEnoughCharge
             self.card_amount -= Trip.trips[trip_type].cost
+            return True
         except NotEnoughCharge as e:
             print(e)
-            return
+            return False
 
     def timed(self, trip_type):
         try:
@@ -56,9 +58,10 @@ class Card:
             if self.card_amount < Trip.trips[trip_type].cost:
                 raise NotEnoughCharge
             self.card_amount -= Trip.trips[trip_type].cost
+            return True
         except NotEnoughCharge as e:
             print(e)
-            return
+            return False
 
     def card_charge(self, amount):
         self.card_amount += amount
