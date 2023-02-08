@@ -42,48 +42,86 @@ while True:
             if _op == "signup":
                 first_name = input("Enter your first name: ")
                 last_name = input("Enter your last name: ")
-                balance_bank_acc = int(input("Enter your balance bank account: "))
-                new_bank_acc = BankAccount(balance_bank_acc)
-                phone_number = input("Enter your phone number: ")
-                ssn = input("Enter your National Code: ")
-                new_client = Client.signup(first_name, last_name, new_bank_acc, ssn, phone_number)
-                print(f'your ID is: {new_client.get_id()}')
+                while True:
+                    try:
+                        balance_bank_acc = int(input("Enter your balance bank account: "))
+                    except ValueError:
+                        print("You should enter a number not string!")
+                        continue
+                    new_bank_acc = BankAccount(balance_bank_acc)
+                    phone_number = input("Enter your phone number: ")
+                    ssn = input("Enter your National Code: ")
+                    new_client = Client.signup(first_name, last_name, new_bank_acc, ssn, phone_number)
+                    print(f'your ID is: {new_client.get_id()}')
+                    break
 
-                print("""
-                CARD TYPE:
-                1.One Way
-                2.Credit
-                3.Timed
-                """)
-                card_type = int(input("Your card type: "))
-                if card_type == 1:
-                    amount = int(input("Your Card Charge: "))
-                    new_client.bank_acc.withdraw(amount)
-                    Client.update_clients_pickle()
-                    Client.buy_card(card_type, amount, None)
-                    print("FINISH!")
+                while True:
+                    print("""
+                    CARD TYPE:
+                    1.One Way
+                    2.Credit
+                    3.Timed
+                    """)
+                    card_type = int(input("Your card type: "))
+                    if card_type == 1:
+                        while True:
+                            try:
+                                amount = int(input("Your Card Charge: "))
+                            except ValueError:
+                                print("You should enter a number not string!")
+                                continue
+                            new_client.bank_acc.withdraw(amount)
+                            Client.update_clients_pickle()
+                            Client.buy_card(card_type, amount, None)
+                            print("FINISH!")
+                            break
+                        break
 
-                elif card_type == 2:
-                    amount = int(input("Your Card Charge: "))
-                    new_client.bank_acc.withdraw(amount)
-                    Client.update_clients_pickle()
-                    print(f"balance in bank: {new_client.bank_acc.get_balance()}")
-                    Client.buy_card(card_type, amount, None)
-                    print("YOUR CARD CREATED!")
+                    elif card_type == 2:
+                        while True:
+                            try:
+                                amount = int(input("Your Card Charge: "))
+                                new_client.bank_acc.withdraw(amount)
+                                Client.update_clients_pickle()
+                                print(f"balance in bank: {new_client.bank_acc.get_balance()}")
+                                Client.buy_card(card_type, amount, None)
+                                print("YOUR CARD CREATED!")
+                                break
+                            except ValueError:
+                                print("You should enter a number not string!")
+                                continue
+                        break
 
-                elif card_type == 3:
-                    now = datetime.datetime.now()
-                    expiration = now + datetime.timedelta(minutes=1)
-                    amount = int(input("Your Card Charge: "))
-                    new_client.bank_acc.withdraw(amount)
-                    Client.update_clients_pickle()
-                    print(f"balance in bank: {new_client.bank_acc.get_balance()}")
-                    Client.buy_card(card_type, amount, expiration)
-                    print("YOUR CARD CREATED!")
+                    elif card_type == 3:
+                        now = datetime.datetime.now()
+                        expiration = now + datetime.timedelta(minutes=1)
+                        while True:
+                            try:
+                                amount = int(input("Your Card Charge: "))
+                                break
+                            except ValueError:
+                                print("You should enter a number not string!")
+                                continue
+                        new_client.bank_acc.withdraw(amount)
+                        Client.update_clients_pickle()
+                        print(f"balance in bank: {new_client.bank_acc.get_balance()}")
+                        Client.buy_card(card_type, amount, expiration)
+                        print("YOUR CARD CREATED!")
+                        break
+
+                    else:
+                        print("Wrong input!")
 
             elif _op == "login":
-                input_ssn = input("Enter your National Code: ")
-                print(f"your ID is: {Client.clients[input_ssn].get_id()}")
+                while True:
+                    input_ssn = input("Enter your National Code: ")
+                    try:
+                        print(f"your ID is: {Client.clients[input_ssn].get_id()}")
+                        break
+                    except KeyError:
+                        print("There is no this national code!")
+                        continue
+
                 input_id = input("Enter your id:")
                 while True:
                     print("""
@@ -102,13 +140,25 @@ while True:
                             """)
                             inp = int(input("> "))
                             if inp == 1:
-                                withdrawal = int(input("Withdrawal amount > "))
-                                bank.withdraw(withdrawal)
+                                while True:
+                                    try:
+                                        withdrawal = int(input("Withdrawal amount > "))
+                                        bank.withdraw(withdrawal)
+                                        break
+                                    except ValueError:
+                                        print("You should enter a number not string!")
+                                        continue
                             elif inp == 2:
-                                deposit = int(input("Deposit amount > "))
-                                bank.deposit(deposit)
+                                while True:
+                                    try:
+                                        deposit = int(input("Deposit amount > "))
+                                        bank.deposit(deposit)
+                                    except ValueError:
+                                        print("You should enter a number not string!")
+                                        continue
                             elif inp == 3:
                                 print(f"The remaining amount: {bank.get_balance()}")
+
                     elif choice == 2:
 
                         if input_id in Card.cards:
@@ -194,6 +244,8 @@ while True:
                         break
             elif _op == "exit":
                 break
+            else:
+                print("Wrong input!")
 
     elif op == "admin login":
         while True:
@@ -207,11 +259,16 @@ while True:
                 input_ssn = input("Enter your National Code: ")
                 new_admin = Admin.new_admin(first_name, last_name, None, input_ssn, None)
                 print(f'your ID is: {new_admin.get_id()}')
-                print(Admin.admins)
 
             elif _op == "login":
-                input_ssn = input("Enter your National Code: ")
-                print(f"your ID is: {Admin.admins[input_ssn].get_id()}")
+                while True:
+                    input_ssn = input("Enter your National Code: ")
+                    try:
+                        print(f"your ID is: {Admin.admins[input_ssn].get_id()}")
+                        break
+                    except KeyError:
+                        print("There is no this national code!")
+                        continue
                 input_id = input("Enter your id:")
                 while True:
                     if input_ssn in Admin.admins:
@@ -239,3 +296,6 @@ while True:
 
             elif _op == "exit":
                 break
+
+            else:
+                print("Wrong input!")
