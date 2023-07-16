@@ -96,7 +96,7 @@ class Client:
             pickle.dump(cls.clients, clients_info_file)
 
     @classmethod
-    def buy_card(cls, card_type, card_amount, date):
+    def buy_card(cls, card_type, card_amount=3000, date=None):
         Card.new_card(list(cls.clients.values())[-1].__id, card_type, card_amount, date)
 
 

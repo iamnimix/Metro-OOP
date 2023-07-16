@@ -63,18 +63,10 @@ while True:
                     """)
                     card_type = int(input("Your card type: "))
                     if card_type == 1:
-                        while True:
-                            try:
-                                amount = int(input("Your Card Charge: "))
-                                break
-                            except ValueError:
-                                print("You should enter a number not string!")
-                                logger.error("Input charge card in oneway type!")
-                                continue
-                            new_client.bank_acc.withdraw(amount)
-                            Client.update_clients_pickle()
-                            Client.buy_card(card_type, amount, None)
-                            print("FINISH!")
+                        new_client.bank_acc.withdraw(3000)
+                        Client.update_clients_pickle()
+                        Client.buy_card(card_type)
+                        print("FINISH!")
                         break
 
                     elif card_type == 2:
@@ -151,6 +143,7 @@ while True:
                                     try:
                                         withdrawal = int(input("Withdrawal amount > "))
                                         bank.withdraw(withdrawal)
+                                        Client.update_clients_pickle()
                                         logger.info(f"{input_ssn} withdraw {withdrawal}")
                                         break
                                     except ValueError:
@@ -162,6 +155,7 @@ while True:
                                     try:
                                         deposit = int(input("Deposit amount > "))
                                         bank.deposit(deposit)
+                                        Client.update_clients_pickle()
                                         logger.info(f"{input_ssn} deposit {deposit}")
                                         break
                                     except ValueError:
@@ -169,7 +163,10 @@ while True:
                                         logger.error("Input Invalid Deposit amount from bank!")
                                         continue
                             elif inp == 3:
-                                print(f"The remaining amount: {bank.get_balance()}")
+                                with open('client.pickle', 'rb') as pi:
+                                    db = pickle.load(pi)
+                                    client_bank = db.get(input_ssn).bank_acc
+                                    print(f"The remaining amount: {client_bank.get_balance()}")
 
                     elif choice == 2:
 
